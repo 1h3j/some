@@ -1,0 +1,4 @@
+CompileFlags:
+  Add: [-I/home/aidan/Projects/EnderPearlLUT/src, -I/home/aidan/Projects/EnderPearlLUT/glad/include, -xc, -Wall -DLOGGING_SHOW_FILE -DLOGGING_COLOR]
+  Compiler: gcc
+
