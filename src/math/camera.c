@@ -1,6 +1,7 @@
 #include "math/camera.h"
 #include "math/matrix.h"
 #include "math/transform.h"
+#include "math/vectors.h"
 #include <stdlib.h>
 
 void camera_calculate_matrices(struct camera_t *camera) {
@@ -8,7 +9,7 @@ void camera_calculate_matrices(struct camera_t *camera) {
   transform_fl_rotate_x(&camera->view_matrix, camera->rotation.pitch);
   transform_fl_rotate_y(&camera->view_matrix, camera->rotation.yaw);
   transform_fl_translate(&camera->view_matrix,
-                         vec3f_mul_sc(camera->position, -1.0));
+                         vec3_scale(struct vec3f_t, camera->position, -1.0f));
 
   if (camera->projection_type == PROJECTION_TYPE_ORTHO) {
     // clang-format off

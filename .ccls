@@ -1,0 +1,2 @@
+%gcc
+%-Isrc -Iglad/include -o $(OUT) -lm -lSDL3 -lGL -DLOGGING_COLOR

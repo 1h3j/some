@@ -1,4 +1,5 @@
 #include "math/matrix.h"
+#include <string.h>
 
 void matrix_4x4f_multiply(struct matrix_4x4f_t *a, struct matrix_4x4f_t *b) {
   struct matrix_4x4f_t result = {0};
@@ -11,7 +12,7 @@ void matrix_4x4f_multiply(struct matrix_4x4f_t *a, struct matrix_4x4f_t *b) {
     }
   }
 
-  *a = result;
+  memcpy(a->m, result.m, sizeof(float) * 4 * 4);
 }
 
 void matrix_4x4f_identity(struct matrix_4x4f_t *matrix) {
@@ -36,7 +37,7 @@ void matrix_4x4d_multiply(struct matrix_4x4d_t *a, struct matrix_4x4d_t *b) {
     }
   }
 
-  *a = result;
+  memcpy(a->m, result.m, sizeof(double) * 4 * 4);
 }
 
 void matrix_4x4d_identity(struct matrix_4x4d_t *matrix) {

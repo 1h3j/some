@@ -1,0 +1,28 @@
+#include <lazy/event/events.h>
+#include <lazy/util/logging.h>
+
+#include <SDL3/SDL.h>
+
+_on_event(SDL_EVENT, {
+  SDL_Event *ev = __event->sdl_event;
+
+  if (ev->type == SDL_EVENT_QUIT) {
+    logger_info("Quitting..");
+    return APPSTATUS_EXIT_SUCCESS;
+  }
+
+  return APPSTATUS_CONTINUE;
+})
+
+_on_event(RENDER_EVENT, {
+  renderer_t *render = __event->renderer;
+
+  render_fill(0.f, 0.f, 0.f, 1.f);
+
+  render_2d_rect((rect_2d_t) {
+    { 0, 0 },
+    { 1, 1 }
+  });
+
+  return APPSTATUS_CONTINUE;
+})
