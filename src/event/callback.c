@@ -2,6 +2,8 @@
 #include "events.h"
 
 #include "app/appstate.h"
+#include "math/angles.h"
+#include "math/camera.h"
 #include "render/renderer.h"
 #include "util/logging.h"
 
@@ -59,6 +61,15 @@ int main(int argc, char** argv) {
   renderer_initialize(state.renderer);
   log_info("Running OpenGL %d.%d", GL_MAJOR, GL_MINOR);
 
+  state.renderer->camera.width = WINDOW_WIDTH;
+  state.renderer->camera.height = WINDOW_HEIGHT;
+  state.renderer->camera.clip_near = 0.1f;
+  state.renderer->camera.clip_far = 100.f;
+  state.renderer->camera.field_of_view = 90.f;
+  state.renderer->camera.zoom = 1.f; 
+  state.renderer->camera.position = (struct vec3f_t){0, 0, 0};
+  state.renderer->camera.rotation = (struct rotation_t){0, 0, 0};
+
   info.renderer = state.renderer;
   info.appstate = &state;
   info.sdl_event = &ev;
@@ -66,6 +77,7 @@ int main(int argc, char** argv) {
   create_event(EVENT_TYPE_INIT_EVENT, &info);
 
   while (state.appstatus_e == APPSTATUS_CONTINUE) {
+    camera_calculate_matrices(&state.renderer->camera);
     create_event(EVENT_TYPE_RENDER_EVENT, &info);
     SDL_GL_SwapWindow(state.window);
 

@@ -125,5 +125,5 @@ void shader_uniform_mat4x4f(struct shader_t *shader, const char *name,
                             struct matrix_4x4f_t *value) {
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
-  glUniformMatrix4fv(location, 1, GL_FALSE, &value->m[0][0]); // lmao
+  glUniformMatrix4fv(location, 1, GL_TRUE, &value->m[0][0]); // lmao
 }

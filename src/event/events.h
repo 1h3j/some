@@ -27,7 +27,9 @@ void callback_array_free(callback_array_t *arr);
 #define MACRO_CONCAT(a, b) CONCAT_IMPL(a, b)
 
 #define EVENT_HANDLER(event_type, id, logic) void id (event_info_t *event) logic __attribute__((constructor)) static void MACRO_CONCAT(register_event_handler_, __COUNTER__)() { callback_array_append(&id, event_type ); }
+//#define EVENT_HANDLER(event_type, id) __attribute__((constructor)) static void MACRO_CONCAT(register_event_handler_, __COUNTER__)() { callback_array_append(&id, event_type ); } void id (event_info_t *event)
 
+// #define on_event(event_type, logic) EVENT_HANDLER(event_type, MACRO_CONCAT(event_handler_, __COUNTER__), logic)
 #define on_event(event_type, logic) EVENT_HANDLER(event_type, MACRO_CONCAT(event_handler_, __COUNTER__), logic)
 
 #define create_event_listener(event_type) callback_array_t *event_type; __attribute__((constructor)) static void MACRO_CONCAT(event_listener_constructor_, __COUNTER__)() { event_type = callback_array_create(); } static void MACRO_CONCAT(event_listener_deconstructor_, __COUNTER__)() { callback_array_free(event_type); }

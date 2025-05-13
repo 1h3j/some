@@ -73,8 +73,13 @@ void renderer_line(struct renderer_t *renderer, struct line_t line) {
 
   glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(struct vec3f_t) * 2, buffer); 
 
-  shader_uniform_vec4f(renderer->default_2d, "color", line.color);
-  shader_use(renderer->default_2d);
+  if (renderer->current_shader == NULL) {
+    shader_uniform_vec4f(renderer->default_2d, "color", line.color);
+    shader_use(renderer->default_2d);
+  } else {
+    shader_uniform_vec4f(renderer->current_shader, "color", line.color);
+    shader_use(renderer->current_shader);
+  }
 
   glLineWidth(line.width);
   glDrawArrays(GL_LINES, 0, 2);
@@ -93,17 +98,25 @@ void renderer_quad(struct renderer_t *renderer, struct quad_t quad) {
     (quad.q1.z + quad.q2.z + quad.q3.z + quad.q4.z) / 4.f
   };
 
-  struct vec3f_t buffer[4] = {
-    quad.q2, 
-    quad.q3, 
-    quad.q1, 
-    quad.q4, 
-  };
+  struct vec3f_t buffer[4];
+
+  for (int i=0; i<4; i++) {
+    struct vec3f_t rel_point = vec3_sub(struct vec3f_t, (&quad.q1)[i], avg_point);
+    if      (rel_point.x >= 0 && rel_point.y >= 0) buffer[2] = (&quad.q1)[i]; // Q1
+    else if (rel_point.x <  0 && rel_point.y >= 0) buffer[0] = (&quad.q1)[i]; // Q2
+    else if (rel_point.x <  0 && rel_point.y <  0) buffer[1] = (&quad.q1)[i]; // Q3
+    else if (rel_point.x >= 0 && rel_point.y <  0) buffer[3] = (&quad.q1)[i]; // Q4
+  }
 
   glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(struct vec3f_t) * 4, buffer); 
 
-  shader_uniform_vec4f(renderer->default_2d, "color", quad.color);
-  shader_use(renderer->default_2d);
+  if (renderer->current_shader == NULL) {
+    shader_uniform_vec4f(renderer->default_2d, "color", quad.color);
+    shader_use(renderer->default_2d);
+  } else {
+    shader_uniform_vec4f(renderer->current_shader, "color", quad.color);
+    shader_use(renderer->current_shader);
+  }
 
   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   glBindVertexArray(0);
@@ -113,6 +126,10 @@ void renderer_quad(struct renderer_t *renderer, struct quad_t quad) {
 void renderer_set_shader(struct renderer_t *renderer, struct shader_t *shader) {
   renderer->current_shader = shader;
   glUseProgram(shader->program);
+}
+
+void renderer_clear_shader(struct renderer_t *renderer) {
+  renderer->current_shader = NULL;
 }
 
 

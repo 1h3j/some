@@ -9,11 +9,11 @@
 
 #include <glad/glad.h>
 
-#define RENDERER_2D_DEFAULT_VSH_S "#version 330\nlayout (location = 0) in vec3 aPos;\nvoid main() { gl_Position = vec4(aPos, 1.0); }"
+#define RENDERER_2D_DEFAULT_VSH_S "#version 330\nlayout (location = 0) in vec3 aPos; uniform mat4 model = mat4(1);\nvoid main() { gl_Position = model * vec4(aPos, 1.0); }"
 #define RENDERER_2D_DEFAULT_FSH_S "#version 330\nuniform vec4 color;\nout vec4 fragmentColor;\nvoid main() { fragmentColor = color; }"
 
-#define RENDERER_3D_DEFAULT_VSH_S "#version 330\nlayout (location = 0) in vec3 aPos;\nuniform mat4 model;\nuniform mat4 view;\nuniform mat4 projection;\nvoid main() { gl_Position = projection * view * model * vec4(aPos, 1.0); }"
-#define RENDERER_3D_DEFAULT_FSH_S "#version 330\nuniform vec4 color;\nout vec4 fragmentColor;\nvoid main() { fragmentColor = color; }"
+#define RENDERER_3D_DEFAULT_VSH_S "#version 330\nlayout (location = 0) in vec3 aPos;\nuniform mat4 model = mat4(1);\nuniform mat4 view;\nuniform mat4 projection;\nvoid main() { gl_Position = projection * view * model * vec4(aPos, 1.0); }"
+#define RENDERER_3D_DEFAULT_FSH_S "#version 330\nuniform vec4 color;\nout vec4 fragmentColor;\nvoid main() { fragmentColor = color; fragmentColor *= gl_FrontFacing ? 1 : 0.5; }"
 
 struct line_t {
   struct vec3f_t start, end;

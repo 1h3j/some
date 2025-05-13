@@ -23,7 +23,9 @@ struct camera_t {
   } projection_type;
 };
 
-struct camera_t *create_camera(int width, int height);
+struct camera_t *camera_create(int width, int height);
+
+void camera_free(struct camera_t *camera);
 
 void camera_calculate_matrices(struct camera_t *camera);
 
