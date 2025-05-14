@@ -10,8 +10,14 @@ struct rotation_t {
   degrees_angle_t roll;
 };
 
+/**
+ * Convert from radians to degrees
+*/
 degrees_angle_t radians_to_degrees(radians_angle_t radians);
 
+/**
+ * Convert from degrees to radians
+*/
 radians_angle_t degrees_to_radians(degrees_angle_t degrees);
 
 #endif // !ANGLED_H

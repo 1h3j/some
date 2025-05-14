@@ -15,10 +15,21 @@
 #define RENDERER_3D_DEFAULT_VSH_S "#version 330\nlayout (location = 0) in vec3 aPos;\nuniform mat4 model = mat4(1);\nuniform mat4 view;\nuniform mat4 projection;\nvoid main() { gl_Position = projection * view * model * vec4(aPos, 1.0); }"
 #define RENDERER_3D_DEFAULT_FSH_S "#version 330\nuniform vec4 color;\nout vec4 fragmentColor;\nvoid main() { fragmentColor = color; fragmentColor *= gl_FrontFacing ? 1 : 0.5; }"
 
+struct triangle_t {
+  struct vec3f_t v1, v2, v3;
+  struct vec4f_t color;
+  float width;
+};
+
 struct line_t {
   struct vec3f_t start, end;
   struct vec4f_t color;
   float width;
+};
+
+struct rect_t {
+  struct vec3f_t start, end;
+  struct vec4f_t color;
 };
 
 struct quad_t {
@@ -42,22 +53,79 @@ struct renderer_t {
 
   struct camera_t camera;
 
-  unsigned int line_vao, quad_vao, cube_vao;
-  unsigned int line_vbo, quad_vbo, cube_vbo;
+  unsigned int tri_vao, line_vao, quad_vao, cube_vao;
+  unsigned int tri_vbo, line_vbo, quad_vbo, cube_vbo;
+  unsigned int cube_ebo;
 };
 
+/**
+ * Changes current_shader. This does not call shader_use.
+ *
+ * @param renderer Pointer to a renderer
+ * @param shader   Pointer to a shader object
+*/
 void renderer_set_shader(struct renderer_t *renderer, struct shader_t *shader);
 
+/**
+ * Allocates a renderer and assigns an OpenGL context to it.
+ *
+ * @param window An SDL Window to put the context in
+ * @return A pointer to the allocated renderer
+*/
 struct renderer_t *renderer_create(SDL_Window *window);
 
+/**
+ * Initializes renderer resources
+ *
+ * @param renderer Pointer to an allocated renderer
+*/
 void renderer_initialize(struct renderer_t *renderer);
 
+/**
+ * Frees the resources associated with the particular renderer.
+ *
+ * @param renderer Pointer to a renderer
+*/
 void renderer_free(struct renderer_t *renderer);
 
+/**
+ * Draws a line to the renderer
+ *
+ * @param renderer Pointer to a renderer
+ * @param line     A line object
+*/
 void renderer_line(struct renderer_t *renderer, struct line_t line);
 
+/**
+ * Draws a quad to the renderer
+ *
+ * @param renderer Pointer to a renderer
+ * @param quad     A quad object
+*/
 void renderer_quad(struct renderer_t *renderer, struct quad_t quad);
 
+/**
+ * Draws a 3d rectangle to the renderer
+ *
+ * @param renderer Pointer to a renderer
+ * @param rect     A rectangle object
+*/
+void renderer_rect(struct renderer_t *renderer, struct rect_t rect, bool cull_faces);
+
+/**
+ * Draws a triangle to the renderer
+ *
+ * @param renderer Pointer to a renderer
+ * @param triangle A triangle object
+*/
+void renderer_triangle(struct renderer_t *renderer, struct triangle_t triangle);
+
+/**
+ * Fills the context with a color.
+ *
+ * @param color
+ * @param clear_mask A bunch of flags OR'ed together. Recommended value is GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT
+*/
 void renderer_fill(struct vec4f_t color, GLbitfield clear_mask);
 
 #endif // !RENDERER_H

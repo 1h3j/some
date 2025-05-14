@@ -23,10 +23,27 @@ struct camera_t {
   } projection_type;
 };
 
+/**
+ * Allocates a camera object.
+ * 
+ * @param width  Width of the display
+ * @param height Height of the display
+ * @return A camera object
+*/
 struct camera_t *camera_create(int width, int height);
 
+/**
+ * Free resources used by camera
+ *
+ * @param camera Pointer to a camera object.
+*/
 void camera_free(struct camera_t *camera);
 
+/**
+ * Calculate the view and projection matrices for use
+ *
+ * @param camera Pointer to a camera object
+*/
 void camera_calculate_matrices(struct camera_t *camera);
 
 #endif // !CAMERA_H

@@ -2,6 +2,7 @@
 #include "events.h"
 
 #include "app/appstate.h"
+#include "glad/glad.h"
 #include "math/angles.h"
 #include "math/camera.h"
 #include "render/renderer.h"
@@ -33,7 +34,7 @@ int main(int argc, char** argv) {
 
   state.window = SDL_CreateWindow("SomeEngine", 
                                   WINDOW_WIDTH, WINDOW_HEIGHT, 
-                                  SDL_WINDOW_OPENGL);
+                                  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   if (state.window == NULL) {
     log_fatal("SDL_CreateWindow failed: %s", SDL_GetError());
     return -1;
@@ -70,20 +71,36 @@ int main(int argc, char** argv) {
   state.renderer->camera.position = (struct vec3f_t){0, 0, 0};
   state.renderer->camera.rotation = (struct rotation_t){0, 0, 0};
 
+  camera_calculate_matrices(&state.renderer->camera);
+
   info.renderer = state.renderer;
   info.appstate = &state;
   info.sdl_event = &ev;
 
+  state.width = WINDOW_WIDTH;
+  state.height = WINDOW_HEIGHT;
+
+
   create_event(EVENT_TYPE_INIT_EVENT, &info);
 
   while (state.appstatus_e == APPSTATUS_CONTINUE) {
-    camera_calculate_matrices(&state.renderer->camera);
     create_event(EVENT_TYPE_RENDER_EVENT, &info);
     SDL_GL_SwapWindow(state.window);
 
     while (SDL_PollEvent(&ev)) {
       create_event(EVENT_TYPE_SDL_EVENT, &info);
+      if (ev.type == SDL_EVENT_WINDOW_RESIZED) {
+        state.width = ev.window.data1;
+        state.height = ev.window.data2;
+        
+        state.renderer->camera.width  = state.width;
+        state.renderer->camera.height = state.height;
+
+        glViewport(0, 0, state.width, state.height);
+      }
     }
+
+    camera_calculate_matrices(&state.renderer->camera);
   }
 
   create_event(EVENT_TYPE_QUIT_EVENT, &info);

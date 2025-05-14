@@ -9,6 +9,8 @@ typedef struct {
   struct renderer_t *renderer;
   resource_stack_t *resources;
 
+  unsigned int width, height;
+
   enum {
     APPSTATUS_CONTINUE,
     APPSTATUS_EXIT_SUCCESS,

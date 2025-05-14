@@ -1,15 +1,14 @@
 #include "render/renderer.h"
 #include "glad/glad.h"
-#include "math/matrix.h"
 #include "math/vectors.h"
 #include "render/shader.h"
 #include <stdlib.h>
+
 
 struct renderer_t *renderer_create(SDL_Window *window) {
   struct renderer_t *renderer =
       (struct renderer_t *)malloc(sizeof(struct renderer_t));
   renderer->context = SDL_GL_CreateContext(window);
-
   return renderer;
 }
 
@@ -18,10 +17,28 @@ void renderer_initialize(struct renderer_t *renderer) {
   renderer->default_2d = create_shader(RENDERER_2D_DEFAULT_VSH_S, RENDERER_2D_DEFAULT_FSH_S);
   renderer->default_3d = create_shader(RENDERER_3D_DEFAULT_VSH_S, RENDERER_3D_DEFAULT_FSH_S);
 
-  glGenVertexArrays(3, &renderer->line_vao);
-  glGenBuffers(3, &renderer->line_vbo);
 
-  // Line
+  glGenVertexArrays(1, &renderer->tri_vao);
+  glGenBuffers(1, &renderer->tri_vbo);
+
+  glGenVertexArrays(1, &renderer->line_vao);
+  glGenBuffers(1, &renderer->line_vbo);
+
+  glGenVertexArrays(1, &renderer->quad_vao);
+  glGenBuffers(1, &renderer->quad_vbo);
+  
+  glGenVertexArrays(1, &renderer->cube_vao);
+  glGenBuffers(1, &renderer->cube_vbo);
+
+
+  glBindVertexArray(renderer->tri_vao);
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->tri_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 3, NULL,
+               GL_DYNAMIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vec3f_t),
+                        (void *)0);
+  glEnableVertexAttribArray(0);
+
   glBindVertexArray(renderer->line_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->line_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 2, NULL,
@@ -30,7 +47,6 @@ void renderer_initialize(struct renderer_t *renderer) {
                         (void *)0);
   glEnableVertexAttribArray(0);
 
-  // Quad
   glBindVertexArray(renderer->quad_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->quad_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 4, NULL,
@@ -39,7 +55,6 @@ void renderer_initialize(struct renderer_t *renderer) {
                         (void *)0);
   glEnableVertexAttribArray(0);
 
-  // Cube
   glBindVertexArray(renderer->cube_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->cube_vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 8, NULL,
@@ -88,6 +103,28 @@ void renderer_line(struct renderer_t *renderer, struct line_t line) {
 }
 
 
+void renderer_triangle(struct renderer_t *renderer, struct triangle_t triangle) {
+  glBindVertexArray(renderer->tri_vao);
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->tri_vbo);
+
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(struct vec3f_t) * 3, &triangle.v1);
+
+  if (renderer->current_shader == NULL) {
+    shader_uniform_vec4f(renderer->default_2d, "color", triangle.color);
+    shader_use(renderer->default_2d);
+  } else {
+    shader_uniform_vec4f(renderer->current_shader, "color", triangle.color);
+    shader_use(renderer->current_shader);
+  }
+
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+
+  glBindVertexArray(0);
+}
+
+
+// TODO : Have it account for all directions not just the z-axis (use normals)
+
 void renderer_quad(struct renderer_t *renderer, struct quad_t quad) {
   glBindVertexArray(renderer->quad_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->quad_vbo);
@@ -122,10 +159,62 @@ void renderer_quad(struct renderer_t *renderer, struct quad_t quad) {
   glBindVertexArray(0);
 }
 
+// PERF : Add culling
+// Explanation: 
+//   You can only see 1-3 sides of a cube at a time.
+//   By using triangle fans, it's much easier to render
+//   the cube than by using triangle strips.
+//        _ C _
+//     _--  |  --_
+//  B/H_    |    _ D 
+//   |  --_ | _--  |
+//   |    _ A _    |
+//   | _--  |  --_ |
+//   G _    |    _ E 
+//      --_ | _-- 
+//          F 
+
+void renderer_rect(struct renderer_t *renderer, struct rect_t rect, bool cull_faces) {
+  glBindVertexArray(renderer->cube_vao);
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->cube_vbo);
+
+  struct vec3f_t buffer[8] = {
+    rect.start,
+    {rect.start.x, rect.start.y, rect.end.z},
+    {rect.end.x, rect.start.y, rect.end.z},
+    {rect.end.x, rect.start.y, rect.start.z},
+
+    {rect.start.x, rect.end.y, rect.start.z},
+    {rect.start.x, rect.end.y, rect.end.z},
+    rect.end,
+    {rect.end.x, rect.end.y, rect.start.z}
+  };
+
+  unsigned int indices[] = {
+    0, 4, 5, 0, 5, 1,
+    0, 2, 1, 0, 3, 2,
+    0, 4, 7, 0, 7, 3,
+    5, 4, 7, 5, 7, 6,
+    3, 7, 6, 3, 6, 2,
+    1, 5, 6, 1, 6, 2
+  };
+
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(buffer), buffer);
+
+  if (renderer->current_shader == NULL) {
+    shader_uniform_vec4f(renderer->default_3d, "color", rect.color);
+    shader_use(renderer->default_3d);
+  } else {
+    shader_uniform_vec4f(renderer->current_shader, "color", rect.color);
+    shader_use(renderer->current_shader);
+  }
+ 
+  glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(unsigned int), GL_UNSIGNED_INT, indices);
+  glBindVertexArray(0);
+}
 
 void renderer_set_shader(struct renderer_t *renderer, struct shader_t *shader) {
   renderer->current_shader = shader;
-  glUseProgram(shader->program);
 }
 
 void renderer_clear_shader(struct renderer_t *renderer) {
