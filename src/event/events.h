@@ -68,7 +68,7 @@ void callback_array_free(callback_array_t *arr);
 /**
  * Creates a callback array. Must be placed in a source file.
 */
-#define create_event_listener(event_type) callback_array_t *event_type; __attribute__((constructor)) static void MACRO_CONCAT(event_listener_constructor_, __COUNTER__)() { event_type = callback_array_create(); } __attribute__((deconstructor)) static void MACRO_CONCAT(event_listener_deconstructor_, __COUNTER__)() { callback_array_free(event_type); }
+#define create_event_listener(event_type) callback_array_t *event_type; __attribute__((constructor)) static void MACRO_CONCAT(event_listener_constructor_, __COUNTER__)() { event_type = callback_array_create(); } __attribute__((destructor)) static void MACRO_CONCAT(event_listener_destructor_, __COUNTER__)() { callback_array_free(event_type); }
 
 /**
  * Defines a callback array. This must be called first in a header file before calling create_event_listener.
