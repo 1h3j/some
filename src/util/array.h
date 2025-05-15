@@ -39,7 +39,7 @@ void array_append_back(array_t *array, void* ptr);
 #define array_create(type, length) array_create_r(length, sizeof(type))
 
 /**
- * Get the element at a location
+ * Get the pointer of an element
  *
  * @param array    Pointer to an array object
  * @param type     Type of object
