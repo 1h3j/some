@@ -45,6 +45,6 @@ void array_append_back(array_t *array, void* ptr);
  * @param type     Type of object
  * @param location Index of element
 */
-#define array_at(array, type, location) ((type *)array->array)[location]
+#define array_at(arr, location) (arr->array + (location * arr->element_size))
 
 #endif // ARRAY_H
