@@ -12,9 +12,9 @@ void camera_calculate_matrices(struct camera_t *camera) {
 
   const struct vec3f_t zero_vector = (struct vec3f_t){ 0, 0, 0 };
 
-  transform_fl_rotate_x(&camera->view_matrix, degrees_to_radians(camera->rotation.pitch));
-  transform_fl_rotate_y(&camera->view_matrix, degrees_to_radians(camera->rotation.yaw));
-  transform_fl_translate(&camera->view_matrix, vec3_sub(struct vec3f_t, zero_vector, camera->position));
+  transform_f_rotate_x(&camera->view_matrix, degrees_to_radians(camera->rotation.pitch));
+  transform_f_rotate_y(&camera->view_matrix, degrees_to_radians(camera->rotation.yaw));
+  transform_f_translate(&camera->view_matrix, vec3_sub(struct vec3f_t, zero_vector, camera->position));
 
   const float front = camera->clip_near;
   const float back = camera->clip_far;

@@ -3,7 +3,6 @@
 #include "math/camera.h"
 #include "math/matrix.h"
 #include "render/shader.h"
-#include "util/logging.h"
 #include "render/renderer.h"
 #include "math/transform.h"
 #include "event/events.h"
@@ -12,7 +11,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_mouse.h>
-#include <math.h>
 
 struct vec2f_t saved_cursor_position;
 
@@ -79,8 +77,8 @@ on_event(EVENT_TYPE_RENDER_EVENT, {
   matrix_4x4f_identity(&quad_model);
   matrix_4x4f_identity(&line_model);
 
-  transform_fl_rotate_y(&quad_model, degrees_to_radians(time * 45));
-  transform_fl_rotate_x(&quad_model, degrees_to_radians(time * 180));
+  transform_f_rotate_y(&quad_model, degrees_to_radians(time * 45));
+  transform_f_rotate_x(&quad_model, degrees_to_radians(time * 180));
 
   shader_uniform_mat4x4f(render->current_shader, "model", &quad_model);
   shader_uniform_mat4x4f(render->current_shader, "view", &render->camera.view_matrix);
