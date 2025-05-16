@@ -24,5 +24,5 @@ void array_append_back(array_t *array, void* ptr) {
     array->array = reallocarray(array->array, ++array->allocated_length, array->element_size);
   }
   
-  memcpy(&array->array[array->content_length - 1], ptr, array->element_size);
+  memcpy(array->array + array->content_length, ptr, array->element_size);
 }
