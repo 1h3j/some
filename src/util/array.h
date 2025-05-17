@@ -47,4 +47,24 @@ void array_append_back(array_t *array, void* ptr);
 */
 #define array_at(arr, location) ((arr)->array + ((location) * (arr)->element_size))
 
+/*
+ * Macro for a for each loop on an array_t
+ *
+ * Example Usage:
+ * <code>
+ * array_t *arr;
+ * ...
+ * for_array(int* element, arr) {
+ *   ...
+ * }
+ * </code>
+ *
+ * @param entry Variable type and name, must be a pointer.
+ * @param array Pointer to an array.
+*/
+#define for_array(entry, array) for ( unsigned int i = 0, \
+                                      entry = array->array; \
+                                      i < array->content_length; \
+                                      entry = array->array + ( array->element_size * ++i ) )
+
 #endif // ARRAY_H
