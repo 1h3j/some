@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 uint64_t hash_fnv1a(uint64_t base, void* input, int len) {
   uint64_t h = base;
@@ -19,7 +20,6 @@ uint64_t hash_fnv1a(uint64_t base, void* input, int len) {
 
 map_t *map_create(unsigned long size, int layers, unsigned long element_size) {
   map_t *map = (map_t *)malloc(sizeof(map_t));
-
   map->layers = (layer_t *)malloc(sizeof(layer_t) * layers);
 
   map->hash_function = &hash_fnv1a;
@@ -115,4 +115,42 @@ void *map_at(map_t *map, void *key, unsigned int key_len) {
 void map_set(map_t *map, void *key, unsigned int key_len, void *data) {
   void *ptr = map_at(map, key, key_len);
   memcpy(ptr, data, map->element_bytes - sizeof(void *));
+}
+
+bool map_check(map_t *map, void *key, unsigned int key_len) {
+  uint64_t seed = HASHMAP_FNV_BASE;
+
+  void* ptr = NULL;
+
+  for (unsigned int l=0; l < map->layers_size; l++) {
+    layer_t *layer = &(map->layers[l]);
+
+    uint64_t hash = map->hash_function(seed, key, key_len);
+    unsigned int index = (unsigned int)(hash % layer->entries);
+
+    ptr = layer->buckets + (index * map->element_bytes);
+    void **key_ptr_ptr = (void **) ptr;
+
+    if (*key_ptr_ptr == NULL) {
+      return NULL;
+    }
+
+    unsigned int keylen_from_map = *(unsigned int *)(*key_ptr_ptr);
+
+    // For optimization, because memcmp is slow.
+    if (*(char *)key == *(char *) (*key_ptr_ptr + sizeof(unsigned int))) {
+      if (memcmp(key, *key_ptr_ptr + sizeof(unsigned int), key_len) == 0) {
+        break;
+      }
+    }
+
+    seed += HASHMAP_SALT;
+    ptr = NULL;
+  }
+
+  if (ptr == NULL) {
+    return ptr;
+  }
+
+  return ptr + sizeof(void *);
 }
