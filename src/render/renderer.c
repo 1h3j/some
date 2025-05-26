@@ -2,13 +2,31 @@
 #include "glad/glad.h"
 #include "math/vectors.h"
 #include "render/shader.h"
+#include "util/array.h"
+#include "util/logging.h"
+#include "util/hashmap.h"
+#include <stddef.h>
 #include <stdlib.h>
 
+uint64_t nohash(uint64_t b, void* k, int k_l) {
+  uint64_t a;
+
+  if (k_l < sizeof(uint64_t)) {
+    memcpy(&a, k, k_l);
+  } else {
+    a = *(uint64_t *) k;
+  }
+
+  return a;
+}
 
 struct renderer_t *renderer_create(SDL_Window *window) {
   struct renderer_t *renderer =
       (struct renderer_t *)malloc(sizeof(struct renderer_t));
   renderer->context = SDL_GL_CreateContext(window);
+
+  renderer->sim_shaders_array = array_create(struct shader_t *, 128);
+
   return renderer;
 }
 
@@ -17,6 +35,12 @@ void renderer_initialize(struct renderer_t *renderer) {
   renderer->default_2d = create_shader(RENDERER_2D_DEFAULT_VSH_S, RENDERER_2D_DEFAULT_FSH_S);
   renderer->default_3d = create_shader(RENDERER_3D_DEFAULT_VSH_S, RENDERER_3D_DEFAULT_FSH_S);
 
+  unsigned int d = 0;
+  d_map_set(renderer->shader_instances_map, renderer->default_2d->program, &d);
+  array_append_back(renderer->sim_shaders_array, renderer->default_2d);
+
+  d_map_set(renderer->shader_instances_map, renderer->default_3d->program, &d);
+  array_append_back(renderer->sim_shaders_array, renderer->default_3d);
 
   glGenVertexArrays(1, &renderer->tri_vao);
   glGenBuffers(1, &renderer->tri_vbo);
@@ -30,38 +54,77 @@ void renderer_initialize(struct renderer_t *renderer) {
   glGenVertexArrays(1, &renderer->cube_vao);
   glGenBuffers(1, &renderer->cube_vbo);
 
-
+  // Triangles
   glBindVertexArray(renderer->tri_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->tri_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 3, NULL,
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 3 * RENDERING_QUEUE_MAX_INSTANCES, NULL,
                GL_DYNAMIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vec3f_t),
                         (void *)0);
   glEnableVertexAttribArray(0);
 
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->tri_col_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec4f_t) * RENDERING_QUEUE_MAX_INSTANCES, NULL,
+               GL_DYNAMIC_DRAW);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(struct vec4f_t),
+                        (void *)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribDivisor(1, 1);
+
+  // Lines
   glBindVertexArray(renderer->line_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->line_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 2, NULL,
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 2 * RENDERING_QUEUE_MAX_INSTANCES, NULL,
                GL_DYNAMIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vec3f_t),
                         (void *)0);
   glEnableVertexAttribArray(0);
 
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->line_col_width_vbo);
+  glBufferData(GL_ARRAY_BUFFER, (sizeof(struct vec4f_t) + sizeof(float)) * RENDERING_QUEUE_MAX_INSTANCES, NULL,
+               GL_DYNAMIC_DRAW);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(struct vec4f_t) + sizeof(float),
+                        (void *)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribDivisor(1, 1);
+
+  glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(struct vec4f_t) + sizeof(float),
+                        (void *) sizeof(struct vec4f_t));
+  glEnableVertexAttribArray(2);
+  glVertexAttribDivisor(2, 1);
+
+  // Quad
   glBindVertexArray(renderer->quad_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->quad_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 4, NULL,
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 4 * RENDERING_QUEUE_MAX_INSTANCES, NULL,
                GL_DYNAMIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vec3f_t),
                         (void *)0);
   glEnableVertexAttribArray(0);
 
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->quad_col_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec4f_t) * RENDERING_QUEUE_MAX_INSTANCES, NULL,
+               GL_DYNAMIC_DRAW);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(struct vec4f_t),
+                        (void *)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribDivisor(1, 1);
+
+  // Cube
   glBindVertexArray(renderer->cube_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->cube_vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 8, NULL,
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec3f_t) * 8 * RENDERING_QUEUE_MAX_INSTANCES, NULL,
                GL_DYNAMIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct vec3f_t),
                         (void *)0);
   glEnableVertexAttribArray(0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->cube_col_vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(struct vec4f_t) * RENDERING_QUEUE_MAX_INSTANCES, NULL, GL_DYNAMIC_DRAW);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(struct vec4f_t),
+                        (void *)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribDivisor(1, 1);
 }
 
 
@@ -81,22 +144,22 @@ void renderer_line(struct renderer_t *renderer, struct line_t line) {
   glBindVertexArray(renderer->line_vao);
   glBindBuffer(GL_ARRAY_BUFFER, renderer->line_vbo);
 
-  struct vec3f_t buffer[2] = {
-    line.start,
-    line.end
-  };
+  const size_t line_b = sizeof(struct line_t);
+  glBufferSubData(GL_ARRAY_BUFFER, renderer->line_instances * line_b, line_b, &line); 
 
-  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(struct vec3f_t) * 2, buffer); 
+  if (renderer->enable_render_queue) {
+    renderer->line_instances++;
+    return;
+  }
 
   if (renderer->current_shader == NULL) {
-    shader_uniform_vec4f(renderer->default_2d, "color", line.color);
     shader_use(renderer->default_2d);
   } else {
-    shader_uniform_vec4f(renderer->current_shader, "color", line.color);
     shader_use(renderer->current_shader);
   }
 
-  glLineWidth(line.width);
+  // glLineWidth(line.width);
+  glEnable(GL_LINE_WIDTH);
   glDrawArrays(GL_LINES, 0, 2);
 
   glBindVertexArray(0);
@@ -109,13 +172,8 @@ void renderer_triangle(struct renderer_t *renderer, struct triangle_t triangle) 
 
   glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(struct vec3f_t) * 3, &triangle.v1);
 
-  if (renderer->current_shader == NULL) {
-    shader_uniform_vec4f(renderer->default_2d, "color", triangle.color);
-    shader_use(renderer->default_2d);
-  } else {
-    shader_uniform_vec4f(renderer->current_shader, "color", triangle.color);
-    shader_use(renderer->current_shader);
-  }
+  shader_uniform_vec4f(renderer->default_2d, "color", triangle.color);
+  shader_use(renderer->default_2d);
 
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -123,7 +181,7 @@ void renderer_triangle(struct renderer_t *renderer, struct triangle_t triangle) 
 }
 
 
-// TODO : Have it account for all directions not just the z-axis (use normals)
+//  TODO: Have it account for all directions not just the z-axis (use normals)
 
 void renderer_quad(struct renderer_t *renderer, struct quad_t quad) {
   glBindVertexArray(renderer->quad_vao);
@@ -221,8 +279,22 @@ void renderer_clear_shader(struct renderer_t *renderer) {
   renderer->current_shader = NULL;
 }
 
-
 void renderer_fill(struct vec4f_t color, GLbitfield clear_mask) {
   glClearColor(color.x, color.y, color.z, color.w);
   glClear(clear_mask);
+}
+
+void renderer_start_drawing(struct renderer_t *renderer) {
+  if (!renderer->enable_render_queue) {
+    log_warn("Rendering queue is disabled, skipping...");
+    return;
+  }
+
+  struct shader_t *shader;
+  for (int i = 0; i < renderer->sim_shaders_array->allocated_length; i++) {
+    shader = *(struct shader_t **) renderer->sim_shaders_array->array + i;
+    shader_use(shader);
+
+
+  }
 }

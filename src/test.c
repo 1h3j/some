@@ -4,7 +4,7 @@
 #include "math/matrix.h"
 #include "render/shader.h"
 #include "render/renderer.h"
-#include "math/transform.h"
+// #include "math/transform.h"
 #include "event/events.h"
 #include "event/callback.h"
 #include "app/appstate.h"
@@ -72,15 +72,9 @@ on_event(EVENT_TYPE_RENDER_EVENT, {
 
   renderer_set_shader(render, render->default_3d);
 
-  struct matrix_4x4f_t quad_model;
   struct matrix_4x4f_t line_model;
-  matrix_4x4f_identity(&quad_model);
   matrix_4x4f_identity(&line_model);
 
-  transform_f_rotate_y(&quad_model, degrees_to_radians(time * 45));
-  transform_f_rotate_x(&quad_model, degrees_to_radians(time * 180));
-
-  shader_uniform_mat4x4f(render->current_shader, "model", &quad_model);
   shader_uniform_mat4x4f(render->current_shader, "view", &render->camera.view_matrix);
   shader_uniform_mat4x4f(render->current_shader, "projection", &render->camera.projection_matrix);
 

@@ -132,13 +132,13 @@ void *map_at(map_t *map, void* key, unsigned int key_len);
 void map_set(map_t *map, void* key, unsigned int key_len, void* data);
 
 /**
- * Checks if a key exists inside a map
+ * Get the pointer of value without creating an entry like `map_at`
  *
  * @param map     Pointer to a hashmap.
  * @param key     Pointer to the key data.
  * @param key_len Size of the key data in bytes.
 */
-bool map_check(map_t *map, void *key, unsigned int key_len);
+void* map_get(map_t *map, void *key, unsigned int key_len);
 
 #define d_map_at(map, key) map_at(map, &key, sizeof(key))
 #define d_map_set(map, key, data) map_set(map, &key, sizeof(key), data)

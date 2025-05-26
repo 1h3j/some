@@ -117,7 +117,7 @@ void map_set(map_t *map, void *key, unsigned int key_len, void *data) {
   memcpy(ptr, data, map->element_bytes - sizeof(void *));
 }
 
-bool map_check(map_t *map, void *key, unsigned int key_len) {
+void* map_get(map_t *map, void *key, unsigned int key_len) {
   uint64_t seed = HASHMAP_FNV_BASE;
 
   void* ptr = NULL;
