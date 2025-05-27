@@ -1,23 +1,23 @@
 #ifndef ANGLES_H
 #define ANGLES_H
 
-typedef float radians_angle_t;
-typedef float degrees_angle_t;
+typedef float AngleRad;
+typedef float AngleDeg;
 
-struct rotation_t {
-  degrees_angle_t yaw;
-  degrees_angle_t pitch;
-  degrees_angle_t roll;
-};
+typedef struct {
+  AngleDeg yaw;
+  AngleDeg pitch;
+  AngleDeg roll;
+} Rotation3f;
 
 /**
  * Convert from radians to degrees
 */
-degrees_angle_t radians_to_degrees(radians_angle_t radians);
+AngleDeg radians_to_degrees(AngleRad radians);
 
 /**
  * Convert from degrees to radians
 */
-radians_angle_t degrees_to_radians(degrees_angle_t degrees);
+AngleRad degrees_to_radians(AngleDeg degrees);
 
 #endif // !ANGLED_H

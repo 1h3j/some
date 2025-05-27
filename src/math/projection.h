@@ -4,7 +4,7 @@
 #include "matrix.h"
 
 /**
- * Calculated the perspective matrix from various parameters which define a frustum.
+ * Calculate the perspective matrix from various parameters which define a frustum.
  *
  * @param matrix Pointer to a matrix.
  * @param left   The left point of the near plane. 
@@ -14,10 +14,10 @@
  * @param near   Distance of the near plane.
  * @param far    Distance of the far plane.
 */
-void projection_perspective(struct matrix_4x4f_t *matrix, float left, float right, float bottom, float top, float near, float far);
+void projection_perspective(Matrix_4x4f *matrix, float left, float right, float bottom, float top, float near, float far);
 
 /**
- * Calculated the orthographic matrix from various parameters which define a rectangle.
+ * Calculate the orthographic matrix from various parameters which define a rectangular prism.
  *
  * @param matrix Pointer to a matrix.
  * @param left   The left plane.
@@ -27,6 +27,6 @@ void projection_perspective(struct matrix_4x4f_t *matrix, float left, float righ
  * @param near   Distance of the near plane.
  * @param far    Distance of the far plane.
 */
-void projection_orthographic(struct matrix_4x4f_t *matrix, float left, float right, float bottom, float top, float near, float far);
+void projection_orthographic(Matrix_4x4f matrix, float left, float right, float bottom, float top, float near, float far);
 
 #endif // PROJECTION_H

@@ -4,9 +4,9 @@
 #include <math.h>
 
 //// 2D Vector ////
-struct vec2d_t { double x, y; };
-struct vec2i_t { int    x, y; };
-struct vec2f_t { float  x, y; };
+typedef struct { double x, y; } Vec2d; 
+typedef struct { int    x, y; } Vec2i; 
+typedef struct { float  x, y; } Vec2f; 
 
 #define vec2_add(a, b) {a.x + b.x, a.y + b.y}
 #define vec2_sub(a, b) {a.x - b.x, a.y - b.y}
@@ -20,9 +20,9 @@ struct vec2f_t { float  x, y; };
 
 
 //// 3D Vector ////
-struct vec3d_t { double x, y, z; };
-struct vec3i_t { int    x, y, z; };
-struct vec3f_t { float  x, y, z; };
+typedef struct { double x, y, z; } Vec3d;
+typedef struct { int    x, y, z; } Vec3i;
+typedef struct { float  x, y, z; } Vec3f;
 
 #define vec3_add(type, a, b) (type){a.x + b.x, a.y + b.y, a.z + b.z}
 #define vec3_sub(type, a, b) (type){a.x - b.x, a.y - b.y, a.z - b.z}
@@ -36,9 +36,9 @@ struct vec3f_t { float  x, y, z; };
 
 
 //// 4D Vector ////
-struct vec4d_t { double x, y, z, w; };
-struct vec4i_t { int    x, y, z, w; };
-struct vec4f_t { float  x, y, z, w; };
+typedef struct { double x, y, z, w; } Vec4d;
+typedef struct { int    x, y, z, w; } Vec4i;
+typedef struct { float  x, y, z, w; } Vec4f;
 
 #define vec4_add(a, b) {a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w}
 #define vec4_sub(a, b) {a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w}

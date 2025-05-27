@@ -1,8 +1,9 @@
 #include "projection.h"
+#include "math/matrix.h"
 
 #include <string.h>
 
-void projection_perspective(struct matrix_4x4f_t *matrix, float left, float right, float bottom, float top, float near, float far) {
+void projection_perspective(Matrix_4x4f *matrix, float left, float right, float bottom, float top, float near, float far) {
   float m[4][4] = {
     {
       2 * near / (right - left),
@@ -32,3 +33,6 @@ void projection_perspective(struct matrix_4x4f_t *matrix, float left, float righ
 
   memcpy(&matrix->m, m, sizeof(float) * 4 * 4);
 }
+
+// Too fuckin lazy
+// void projection_orthographic(Matrix_4x4f matrix, float left, float right, float bottom, float top, float near, float far);

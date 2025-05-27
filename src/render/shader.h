@@ -5,9 +5,9 @@
 #include "math/vectors.h"
 #include <glad/glad.h>
 
-struct shader_t {
+typedef struct {
   GLuint program, vertex_shader, fragment_shader;
-};
+} Shader;
 
 /**
  * Allocate a shader object and compile the shaders.
@@ -16,7 +16,7 @@ struct shader_t {
  * @param fsh_code The GLSL fragment shader code
  * @return Pointer to a shader object
 */
-struct shader_t *create_shader(const char *vsh_code, const char *fsh_code);
+Shader *create_shader(const char *vsh_code, const char *fsh_code);
 
 /**
  * Loads a file and creates a shader object from the paths given.
@@ -25,21 +25,21 @@ struct shader_t *create_shader(const char *vsh_code, const char *fsh_code);
  * @param fsh_fpath Path to a fragment shader file.
  * @return Pointer to a shader object
 */
-struct shader_t *load_shader(const char *vsh_fpath, const char *fsh_fpath);
+Shader *load_shader(const char *vsh_fpath, const char *fsh_fpath);
 
 /**
  * Frees the resources associated with the shder object.
  *
  * @param shader Shader object
 */
-void free_shader(struct shader_t *shader);
+void free_shader(Shader *shader);
 
 /**
  * Binds the shader object for usage
  *
  * @param shader Shader object
 */
-void shader_use(struct shader_t *shader);
+void shader_use(Shader *shader);
 
 /**
  * Set the uniform value of a shader
@@ -48,8 +48,8 @@ void shader_use(struct shader_t *shader);
  * @param name   Name of the uniform
  * @param value  Value of the uniform
 */
-void shader_uniform_vec3f(struct shader_t *shader, const char *name,
-                          struct vec3f_t value);
+void shader_uniform_Vec3f(Shader *shader, const char *name,
+                          Vec3f value);
 
 /**
  * Set the uniform value of a shader
@@ -58,8 +58,8 @@ void shader_uniform_vec3f(struct shader_t *shader, const char *name,
  * @param name   Name of the uniform
  * @param value  Value of the uniform
 */
-void shader_uniform_vec4f(struct shader_t *shader, const char *name,
-                          struct vec4f_t value);
+void shader_uniform_Vec4f(Shader *shader, const char *name,
+                          Vec4f value);
 
 /**
  * Set the uniform value of a shader
@@ -68,7 +68,7 @@ void shader_uniform_vec4f(struct shader_t *shader, const char *name,
  * @param name   Name of the uniform
  * @param value  Value of the uniform
 */
-void shader_uniform_mat4x4f(struct shader_t *shader, const char *name,
-                            struct matrix_4x4f_t *value);
+void shader_uniform_mat4x4f(Shader *shader, const char *name,
+                            Matrix_4x4f *value);
 
 #endif // !SHADER_H

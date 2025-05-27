@@ -1,13 +1,13 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-struct matrix_4x4d_t {
+typedef struct {
   double m[4][4];
-};
+} Matrix_4x4d;
 
-struct matrix_4x4f_t {
+typedef struct {
   float m[4][4];
-};
+} Matrix_4x4f;
 
 // Float
 
@@ -17,14 +17,14 @@ struct matrix_4x4f_t {
  * @param a Right matrix. Also the matrix that this function will output to.
  * @param b The matrix that applies the transformations to the first matrix.
 */
-void matrix_4x4f_multiply(struct matrix_4x4f_t *a, struct matrix_4x4f_t *b);
+void matrix_4x4f_multiply(Matrix_4x4f *a, Matrix_4x4f *b);
 
 /**
  * Change a matrix to a matrix identity
  *
  * @param matrix Pointer to the matrix
 */
-void matrix_4x4f_identity(struct matrix_4x4f_t *matrix);
+void matrix_4x4f_identity(Matrix_4x4f *matrix);
 
 // Double
 
@@ -34,14 +34,14 @@ void matrix_4x4f_identity(struct matrix_4x4f_t *matrix);
  * @param a Right matrix. Also the matrix that this function will output to.
  * @param b The matrix that applies the transformations to the first matrix.
 */
-void matrix_4x4d_multiply(struct matrix_4x4d_t *a, struct matrix_4x4d_t *b);
+void matrix_4x4d_multiply(Matrix_4x4d *a, Matrix_4x4d *b);
 
 /**
  * Change a matrix to a matrix identity
  *
  * @param matrix Pointer to the matrix
 */
-void matrix_4x4d_identity(struct matrix_4x4d_t *matrix);
+void matrix_4x4d_identity(Matrix_4x4d *matrix);
 
 
 #endif // !MATRIX_H

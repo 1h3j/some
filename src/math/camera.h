@@ -5,23 +5,23 @@
 #include "math/matrix.h"
 #include "math/vectors.h"
 
-struct camera_t {
+typedef struct {
   int width, height;
   float clip_near, clip_far;
   float field_of_view;
   float zoom;
 
-  struct vec3f_t position;
-  struct rotation_t rotation;
+  Vec3f position;
+  Rotation3f rotation;
 
-  struct matrix_4x4f_t view_matrix;
-  struct matrix_4x4f_t projection_matrix;
+  Matrix_4x4f view_matrix;
+  Matrix_4x4f projection_matrix;
 
-  enum __projection_type_e {
+  enum {
     PROJECTION_TYPE_ORTHO,
     PROJECTION_TYPE_PERSPECTIVE
   } projection_type;
-};
+} Camera;
 
 /**
  * Allocates a camera object.
@@ -30,20 +30,20 @@ struct camera_t {
  * @param height Height of the display
  * @return A camera object
 */
-struct camera_t *camera_create(int width, int height);
+Camera *camera_create(int width, int height);
 
 /**
  * Free resources used by camera
  *
  * @param camera Pointer to a camera object.
 */
-void camera_free(struct camera_t *camera);
+void camera_free(Camera *camera);
 
 /**
  * Calculate the view and projection matrices for use
  *
  * @param camera Pointer to a camera object
 */
-void camera_calculate_matrices(struct camera_t *camera);
+void camera_calculate_matrices(Camera *camera);
 
 #endif // !CAMERA_H

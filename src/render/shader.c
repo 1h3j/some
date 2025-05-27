@@ -7,11 +7,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct shader_t *create_shader(const char *vsh_code, const char *fsh_code) {
+Shader *create_shader(const char *vsh_code, const char *fsh_code) {
   int success;
   char status[512];
 
-  struct shader_t *shader = (struct shader_t *)malloc(sizeof(struct shader_t));
+  Shader *shader = (Shader *)malloc(sizeof(Shader));
 
   shader->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
   glShaderSource(shader->vertex_shader, 1, &vsh_code, NULL);
@@ -48,8 +48,8 @@ struct shader_t *create_shader(const char *vsh_code, const char *fsh_code) {
   return shader;
 }
 
-struct shader_t *load_shader(const char *vsh_fpath, const char *fsh_fpath) {
-  struct shader_t *shader;
+Shader *load_shader(const char *vsh_fpath, const char *fsh_fpath) {
+  Shader *shader;
   long fsize;
 
   FILE *file_vsh = fopen(vsh_fpath, "r");
@@ -98,31 +98,31 @@ struct shader_t *load_shader(const char *vsh_fpath, const char *fsh_fpath) {
   return shader;
 }
 
-void free_shader(struct shader_t *shader) {
+void free_shader(Shader *shader) {
   glDeleteProgram(shader->program);
   glDeleteShader(shader->vertex_shader);
   glDeleteShader(shader->fragment_shader);
   free(shader);
 }
 
-void shader_use(struct shader_t *shader) { glUseProgram(shader->program); }
+void shader_use(Shader *shader) { glUseProgram(shader->program); }
 
-void shader_uniform_vec3f(struct shader_t *shader, const char *name,
-                          struct vec3f_t value) {
+void shader_uniform_Vec3f(Shader *shader, const char *name,
+                          Vec3f value) {
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
   glUniform3f(location, value.x, value.y, value.z);
 }
 
-void shader_uniform_vec4f(struct shader_t *shader, const char *name,
-                          struct vec4f_t value) {
+void shader_uniform_Vec4f(Shader *shader, const char *name,
+                          Vec4f value) {
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
   glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
-void shader_uniform_mat4x4f(struct shader_t *shader, const char *name,
-                            struct matrix_4x4f_t *value) {
+void shader_uniform_mat4x4f(Shader *shader, const char *name,
+                            Matrix_4x4f *value) {
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
   glUniformMatrix4fv(location, 1, GL_TRUE, &value->m[0][0]); // lmao

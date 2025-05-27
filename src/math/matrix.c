@@ -1,8 +1,8 @@
 #include "math/matrix.h"
 #include <string.h>
 
-void matrix_4x4f_multiply(struct matrix_4x4f_t *a, struct matrix_4x4f_t *b) {
-  struct matrix_4x4f_t result = {0};
+void matrix_4x4f_multiply(Matrix_4x4f *a, Matrix_4x4f *b) {
+  Matrix_4x4f result = {0};
 
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -15,7 +15,7 @@ void matrix_4x4f_multiply(struct matrix_4x4f_t *a, struct matrix_4x4f_t *b) {
   memcpy(a->m, result.m, sizeof(float) * 4 * 4);
 }
 
-void matrix_4x4f_identity(struct matrix_4x4f_t *matrix) {
+void matrix_4x4f_identity(Matrix_4x4f *matrix) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       if (i == j)
@@ -26,8 +26,8 @@ void matrix_4x4f_identity(struct matrix_4x4f_t *matrix) {
   }
 }
 
-void matrix_4x4d_multiply(struct matrix_4x4d_t *a, struct matrix_4x4d_t *b) {
-  struct matrix_4x4d_t result = {0};
+void matrix_4x4d_multiply(Matrix_4x4d *a, Matrix_4x4d *b) {
+  Matrix_4x4d result = {0};
 
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -40,7 +40,7 @@ void matrix_4x4d_multiply(struct matrix_4x4d_t *a, struct matrix_4x4d_t *b) {
   memcpy(a->m, result.m, sizeof(double) * 4 * 4);
 }
 
-void matrix_4x4d_identity(struct matrix_4x4d_t *matrix) {
+void matrix_4x4d_identity(Matrix_4x4d *matrix) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       if (i == j)

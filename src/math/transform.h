@@ -5,8 +5,8 @@
 #include "matrix.h"
 #include "vectors.h"
 
-typedef struct matrix_4x4f_t transform_f_t;
-typedef struct matrix_4x4d_t transform_d_t;
+typedef Matrix_4x4f TransformF;
+typedef Matrix_4x4d TransformD;
 
 // -- float -- //
 
@@ -16,7 +16,7 @@ typedef struct matrix_4x4d_t transform_d_t;
  * @param transform Pointer to a transformation matrix
  * @param offset   The offset to the transformation
  */
-void transform_f_translate(transform_f_t *transform, struct vec3f_t offset);
+void transform_f_translate(TransformF *transform, Vec3f offset);
 
 /**
  * Scales the transformation matrix uniformly by a scalar.
@@ -24,15 +24,15 @@ void transform_f_translate(transform_f_t *transform, struct vec3f_t offset);
  * @param transform Pointer to a transformation matrix
  * @param scalar    The uniform scale factor
  */
-void transform_f_scale_sc(transform_f_t *transform, float scalar);
+void transform_f_scale_sc(TransformF *transform, float scalar);
 
 /**
  * Scales the transformation matrix by individual axis scale factors.
  *
  * @param transform Pointer to a transformation matrix
- * @param scale     The scale vector
+ * @param scale     The scale Vector
  */
-void transform_f_scale_ve(transform_f_t *transform, struct vec3f_t scale);
+void transform_f_scale_ve(TransformF *transform, Vec3f scale);
 
 /**
  * Applies an X-axis shear to the transformation matrix.
@@ -40,15 +40,14 @@ void transform_f_scale_ve(transform_f_t *transform, struct vec3f_t scale);
  * @param transform Pointer to a transformation matrix
  * @param v         Shear factors
  */
-void transform_f_shear_x(transform_f_t *transform, struct vec3f_t v);
+void transform_f_shear_x(TransformF *transform, Vec3f v);
 
-/**
- * Applies a Y-axis shear to the transformation matrix.
+/** Applies a Y-axis shear to the transformation matrix.
  *
  * @param transform Pointer to a transformation matrix
  * @param v         Shear factors
  */
-void transform_f_shear_y(transform_f_t *transform, struct vec3f_t v);
+void transform_f_shear_y(TransformF *transform, Vec3f v);
 
 /**
  * Applies a Z-axis shear to the transformation matrix.
@@ -56,7 +55,7 @@ void transform_f_shear_y(transform_f_t *transform, struct vec3f_t v);
  * @param transform Pointer to a transformation matrix
  * @param v         Shear factors
  */
-void transform_f_shear_z(transform_f_t *transform, struct vec3f_t v);
+void transform_f_shear_z(TransformF *transform, Vec3f v);
 
 /**
  * Rotates the transformation matrix around the X axis.
@@ -64,7 +63,7 @@ void transform_f_shear_z(transform_f_t *transform, struct vec3f_t v);
  * @param transform Pointer to a transformation matrix
  * @param angle     Rotation angle in radians
  */
-void transform_f_rotate_x(transform_f_t *transform, radians_angle_t angle);
+void transform_f_rotate_x(TransformF *transform, AngleRad angle);
 
 /**
  * Rotates the transformation matrix around the Y axis.
@@ -72,7 +71,7 @@ void transform_f_rotate_x(transform_f_t *transform, radians_angle_t angle);
  * @param transform Pointer to a transformation matrix
  * @param angle     Rotation angle in radians
  */
-void transform_f_rotate_y(transform_f_t *transform, radians_angle_t angle);
+void transform_f_rotate_y(TransformF *transform, AngleRad angle);
 
 /**
  * Rotates the transformation matrix around the Z axis.
@@ -80,15 +79,15 @@ void transform_f_rotate_y(transform_f_t *transform, radians_angle_t angle);
  * @param transform Pointer to a transformation matrix
  * @param angle     Rotation angle in radians
  */
-void transform_f_rotate_z(transform_f_t *transform, radians_angle_t angle);
+void transform_f_rotate_z(TransformF *transform, AngleRad angle);
 
 /**
- * Applies the transformation to a 3D float vector.
+ * Applies the transformation to a 3D float Vector.
  *
  * @param transform Pointer to a transformation matrix
- * @param v         Pointer to the vector to transform (in-place)
+ * @param v         Pointer to the Vector to transform (in-place)
  */
-void transform_f_vec3(transform_f_t *transform, struct vec3f_t *v);
+void transform_f_Vec3(TransformF *transform, Vec3f *v);
 
 
 // -- double -- //
@@ -99,7 +98,7 @@ void transform_f_vec3(transform_f_t *transform, struct vec3f_t *v);
  * @param transform Pointer to a transformation matrix
  * @param offset    The offset to the transformation
  */
-void transform_d_translate(transform_d_t *transform, struct vec3d_t offset);
+void transform_dranslate(TransformD *transform, Vec3d offset);
 
 /**
  * Scales the transformation matrix uniformly by a scalar.
@@ -107,15 +106,15 @@ void transform_d_translate(transform_d_t *transform, struct vec3d_t offset);
  * @param transform Pointer to a transformation matrix
  * @param scalar    The uniform scale factor
  */
-void transform_d_scale_sc(transform_d_t *transform, double scalar);
+void transform_d_scale_sc(TransformD *transform, double scalar);
 
 /**
  * Scales the transformation matrix by individual axis scale factors.
  *
  * @param transform Pointer to a transformation matrix
- * @param scale     The scale vector
+ * @param scale     The scale Vector
  */
-void transform_d_scale_ve(transform_d_t *transform, struct vec3d_t scale);
+void transform_d_scale_ve(TransformD *transform, Vec3d scale);
 
 /**
  * Applies an X-axis shear to the transformation matrix.
@@ -123,7 +122,7 @@ void transform_d_scale_ve(transform_d_t *transform, struct vec3d_t scale);
  * @param transform Pointer to a transformation matrix
  * @param v         Shear factors
  */
-void transform_d_shear_x(transform_d_t *transform, struct vec3d_t v);
+void transform_d_shear_x(TransformD *transform, Vec3d v);
 
 /**
  * Applies a Y-axis shear to the transformation matrix.
@@ -131,7 +130,7 @@ void transform_d_shear_x(transform_d_t *transform, struct vec3d_t v);
  * @param transform Pointer to a transformation matrix
  * @param v         Shear factors
  */
-void transform_d_shear_y(transform_d_t *transform, struct vec3d_t v);
+void transform_d_shear_y(TransformD *transform, Vec3d v);
 
 /**
  * Applies a Z-axis shear to the transformation matrix.
@@ -139,7 +138,7 @@ void transform_d_shear_y(transform_d_t *transform, struct vec3d_t v);
  * @param transform Pointer to a transformation matrix
  * @param v         Shear factors
  */
-void transform_d_shear_z(transform_d_t *transform, struct vec3d_t v);
+void transform_d_shear_z(TransformD *transform, Vec3d v);
 
 /**
  * Rotates the transformation matrix around the X axis.
@@ -147,7 +146,7 @@ void transform_d_shear_z(transform_d_t *transform, struct vec3d_t v);
  * @param transform Pointer to a transformation matrix
  * @param angle     Rotation angle in radians
  */
-void transform_d_rotate_x(transform_d_t *transform, radians_angle_t angle);
+void transform_d_rotate_x(TransformD *transform, AngleRad angle);
 
 /**
  * Rotates the transformation matrix around the Y axis.
@@ -155,7 +154,7 @@ void transform_d_rotate_x(transform_d_t *transform, radians_angle_t angle);
  * @param transform Pointer to a transformation matrix
  * @param angle     Rotation angle in radians
  */
-void transform_d_rotate_y(transform_d_t *transform, radians_angle_t angle);
+void transform_d_rotate_y(TransformD *transform, AngleRad angle);
 
 /**
  * Rotates the transformation matrix around the Z axis.
@@ -163,14 +162,14 @@ void transform_d_rotate_y(transform_d_t *transform, radians_angle_t angle);
  * @param transform Pointer to a transformation matrix
  * @param angle     Rotation angle in radians
  */
-void transform_d_rotate_z(transform_d_t *transform, radians_angle_t angle);
+void transform_d_rotate_z(TransformD *transform, AngleRad angle);
 
 /**
- * Applies the transformation to a 3D double vector.
+ * Applies the transformation to a 3D double Vector.
  *
  * @param transform Pointer to a transformation matrix
- * @param v         Pointer to the vector to transform (in-place)
+ * @param v         Pointer to the Vector to transform (in-place)
  */
-void transform_d_vec3(transform_f_t *transform, struct vec3d_t *v);
+void transform_d_vec3(TransformF *transform, Vec3d *v);
 
 #endif // !TRANSFORM_H
