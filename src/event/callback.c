@@ -3,18 +3,16 @@
 
 #include "app/appstate.h"
 #include "glad/glad.h"
-#include "math/angles.h"
-#include "math/camera.h"
 #include "render/renderer.h"
 #include "util/logging.h"
 
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_events.h>
-#include <SDL3/SDL_init.h>
+#include <SDL3/SDL_init.h> 
 #include <SDL3/SDL_video.h>
 
-appstate_t state;
-event_info_t info;
+AppState state;
+EventInfo info;
 SDL_Event ev;
 
 create_event_listener(EVENT_TYPE_RENDER_EVENT);
@@ -45,33 +43,21 @@ int main(int argc, char** argv) {
   SDL_GL_SetSwapInterval(0);
 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, GL_MAJOR);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, GL_MINOR); 
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
   state.renderer = renderer_create(state.window);
-  if (state.renderer->context == NULL) {
+  if (state.renderer->gl == NULL) {
     log_fatal("SDL_GL_CreateContext failed");
     return -1;
   }
 
   if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-    log_fatal("Failed to initialize GLAD");
+    log_fatal("Failed to load OpenGL");
     return -1;
   }
 
-  renderer_initialize(state.renderer);
   log_info("Running OpenGL %d.%d", GL_MAJOR, GL_MINOR);
-
-  state.renderer->camera.width = WINDOW_WIDTH;
-  state.renderer->camera.height = WINDOW_HEIGHT;
-  state.renderer->camera.clip_near = 0.1f;
-  state.renderer->camera.clip_far = 100.f;
-  state.renderer->camera.field_of_view = 90.f;
-  state.renderer->camera.zoom = 1.f; 
-  state.renderer->camera.position = (struct vec3f_t){0, 0, 0};
-  state.renderer->camera.rotation = (struct rotation_t){0, 0, 0};
-
-  camera_calculate_matrices(&state.renderer->camera);
 
   info.renderer = state.renderer;
   info.appstate = &state;
@@ -93,20 +79,14 @@ int main(int argc, char** argv) {
         state.width = ev.window.data1;
         state.height = ev.window.data2;
         
-        state.renderer->camera.width  = state.width;
-        state.renderer->camera.height = state.height;
-
-        glViewport(0, 0, state.width, state.height);
-      }
+        glViewport(0, 0, state.width, state.height); }
     }
-
-    camera_calculate_matrices(&state.renderer->camera);
   }
 
   create_event(EVENT_TYPE_QUIT_EVENT, &info);
 
   if (state.appstatus_e == APPSTATUS_EXIT_SUCCESS) {
-    renderer_free(state.renderer);
+    renderer_destroy(state.renderer);
     SDL_DestroyWindow(state.window);
     log_info("Program finished successfully");
   } else if (state.appstatus_e == APPSTATUS_EXIT_FAILURE) {

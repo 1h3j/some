@@ -2,11 +2,13 @@
 #define APPSTATE_H
 
 #include "resources.h"
+#include "render/renderer.h"
+
 #include <SDL3/SDL_video.h>
 
 typedef struct {
   SDL_Window* window;
-  struct renderer_t *renderer;
+  Renderer *renderer;
   resource_stack_t *resources;
 
   unsigned int width, height;
@@ -16,6 +18,6 @@ typedef struct {
     APPSTATUS_EXIT_SUCCESS,
     APPSTATUS_EXIT_FAILURE,
   } appstatus_e;
-} appstate_t;
+} AppState;
 
 #endif // APPSTATE_H

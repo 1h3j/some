@@ -7,20 +7,20 @@
 typedef struct {
   void **ptrs;
   int size;
-} callback_array_t;
+} FuncPtrArr;
 
 typedef struct {
-  struct renderer_t *renderer;
+  Renderer *renderer;
   SDL_Event *sdl_event;
   void* appstate;
-} event_info_t;
+} EventInfo;
 
 /**
  * Creates a function pointer array
  *
  * @return Pointer to an allocated callback array
 */
-callback_array_t *callback_array_create();
+FuncPtrArr *callback_array_create();
 
 /**
  * Appends a function pointer to the callback array.
@@ -28,7 +28,7 @@ callback_array_t *callback_array_create();
  * @param ptr Pointer to a function.
  * @param arr Pointer to callback array
 */
-void callback_array_append(void* ptr, callback_array_t *arr);
+void callback_array_append(void* ptr, FuncPtrArr *arr);
 
 /**
  * Calls all the functions associated with the callback array.
@@ -36,14 +36,14 @@ void callback_array_append(void* ptr, callback_array_t *arr);
  * @param event_type The callback array used.
  * @param info       Info to be sent to the functions.
 */
-void create_event(callback_array_t *event_type, event_info_t *info);
+void create_event(FuncPtrArr *event_type, EventInfo *info);
 
 /**
  * Frees resources used by the callback array.
  *
  * @param arr Pointer to the callback array
 */
-void callback_array_free(callback_array_t *arr);
+void callback_array_free(FuncPtrArr *arr);
 
 /**
  * Implicit concatenation
@@ -55,7 +55,7 @@ void callback_array_free(callback_array_t *arr);
 */
 #define MACRO_CONCAT(a, b) CONCAT_IMPL(a, b)
 
-#define EVENT_HANDLER(event_type, id, logic) void id (event_info_t *event) logic __attribute__((constructor)) static void MACRO_CONCAT(register_event_handler_, __COUNTER__)() { callback_array_append(&id, event_type ); }
+#define EVENT_HANDLER(event_type, id, logic) void id (EventInfo *event) logic __attribute__((constructor)) static void MACRO_CONCAT(register_event_handler_, __COUNTER__)() { callback_array_append(&id, event_type ); }
 
 /**
  * Defines a function that becomes called once the event is signaled.
@@ -68,11 +68,11 @@ void callback_array_free(callback_array_t *arr);
 /**
  * Creates a callback array. Must be placed in a source file.
 */
-#define create_event_listener(event_type) callback_array_t *event_type; __attribute__((constructor)) static void MACRO_CONCAT(event_listener_constructor_, __COUNTER__)() { event_type = callback_array_create(); } __attribute__((destructor)) static void MACRO_CONCAT(event_listener_destructor_, __COUNTER__)() { callback_array_free(event_type); }
+#define create_event_listener(event_type) FuncPtrArr *event_type; __attribute__((constructor)) static void MACRO_CONCAT(event_listener_constructor_, __COUNTER__)() { event_type = callback_array_create(); } __attribute__((destructor)) static void MACRO_CONCAT(event_listener_destructor_, __COUNTER__)() { callback_array_free(event_type); }
 
 /**
  * Defines a callback array. This must be called first in a header file before calling create_event_listener.
 */
-#define define_event_listener(event_type) extern callback_array_t *event_type;
+#define define_event_listener(event_type) extern FuncPtrArr *event_type;
 
 #endif // EVENTS_H
