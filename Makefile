@@ -1,4 +1,4 @@
-### Input and Output Files ###
+### Input and Output Files ### 
 OBJS = src/*/*.c src/test.c glad/src/glad.c
 OBJ = bin/game
 
@@ -12,17 +12,18 @@ Defines = -DLOGGING_COLOR -DWINDOW_WIDTH=800 -DWINDOW_HEIGHT=600
 
 CFlags = -Wall -lm -lGL -lSDL3 $(GLADInc) -Isrc $(Defines)
 RelFlags = -O3
-ASANFlags = -fsanitize-recover=address,undefined
-DbgFlags = -O0 -ggdb -DDEBUG
-Compiler = gcc
+ASANFlags = -fsanitize=address -fsanitize=undefined -fsanitize=leak
+DbgFlags = -O0 -g -DDEBUG
+Compiler = clang
 
 RBuildCommand = $(Compiler) $(OBJS) $(RelFlags) $(CFlags) -o $(OBJ)
 DBuildCommand = $(Compiler) $(OBJS) $(DbgFlags) $(CFlags) -o $(OBJ)
+SBuildCommand = $(Compiler) $(OBJS) $(DbgFlags) $(ASANFlags) $(CFlags) -o $(OBJ)
 BuildCommand  = $(Compiler) $(OBJS) $(CFlags) -o $(OBJ)
 
 all : $(OBJS)
 	 - make clean
-	make build && make run
+	make debug && make run
 
 clean :
 	@echo -e "\n\001\033[48;5;008m\002 Cleaning up.. \001\033[0m\002"
@@ -62,6 +63,16 @@ debug : $(OBJS)
 	@echo $(DBuildCommand)
 	@echo -e "\n\001\033[48;5;008m\002 Build Output \001\033[0m\002"
 	@$(DBuildCommand)
+
+sanitize : $(OBJS)
+	@echo -e "\n\001\033[48;5;008m\002 Build Command \001\033[0m\002"
+	@if [ ! -d "bin" ]; then\
+		mkdir bin;\
+	fi
+	@echo -e "\n\001\033[48;5;008m\002 Build Command \001\033[0m\002"
+	@echo $(SBuildCommand)
+	@echo -e "\n\001\033[48;5;008m\002 Build Output \001\033[0m\002"
+	@$(SBuildCommand)
 
 package : $(OBJS)
 	 - make clean
