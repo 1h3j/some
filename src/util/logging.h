@@ -3,7 +3,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 
 #include <stdarg.h>
 
@@ -19,16 +19,9 @@ struct text_color_t {
   int foreground, background;
 };
 
-static const char *__log_level_strings[] = {"DEBUG", "INFO", "WARN", "ERROR",
-                                            "FATAL"};
+extern const char *__log_level_strings[];
 
-static const struct text_color_t __log_level_colors[] = {
-    {35, 49},  // LOG_LEVEL_DEBUG
-    {34, 49},  // LOG_LEVEL_INFO
-    {33, 49},  // LOG_LEVEL_WARN
-    {31, 49},  // LOG_LEVEL_ERROR
-    {30, 101}, // LOG_LEVEL_FATAL
-};
+extern const struct text_color_t __log_level_colors[];
 
 #define log_debug(...)                                                         \
   logger_log(LOG_LEVEL_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
@@ -46,5 +39,6 @@ void logger_log(enum log_level_e level, const char *file, int line,
 
 #ifdef __cplusplus
 }
-#endif
-#endif // !#ifndef LOGGING_H
+#endif // __cplusplus
+
+#endif // !LOGGING_H

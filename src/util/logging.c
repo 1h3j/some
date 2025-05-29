@@ -3,6 +3,17 @@
 #include <stdio.h>
 #include <time.h>
 
+const char *__log_level_strings[] = {"DEBUG", "INFO", "WARN", "ERROR",
+                                            "FATAL"};
+
+const struct text_color_t __log_level_colors[] = {
+    {35, 49},  // LOG_LEVEL_DEBUG
+    {34, 49},  // LOG_LEVEL_INFO
+    {33, 49},  // LOG_LEVEL_WARN
+    {31, 49},  // LOG_LEVEL_ERROR
+    {30, 101}, // LOG_LEVEL_FATAL
+};
+
 void logger_log(enum log_level_e level, const char *file, int line,
                 const char *fmt, ...) {
 #ifndef LOGGING_STOP
