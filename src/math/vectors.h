@@ -3,6 +3,7 @@
 
 #include <math.h>
 
+
 //// 2D Vector ////
 typedef struct { double x, y; } Vec2d; 
 typedef struct { int    x, y; } Vec2i; 
