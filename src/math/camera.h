@@ -5,6 +5,8 @@
 #include "math/matrix.h"
 #include "math/vectors.h"
 
+#include "render/shader.h"
+
 typedef struct {
   int width, height;
   float clip_near, clip_far;
@@ -45,5 +47,16 @@ void camera_free(Camera *camera);
  * @param camera Pointer to a camera object
 */
 void camera_calculate_matrices(Camera *camera);
+
+/**
+ * Set the shaders in a camera.
+ *
+ * @param camera        Camera object
+ * @param shader        Shader object
+ * @param view_mat_name Name of the view matrix inside the shader.
+ * @param proj_mat_name Name of the projection matrix inside the shader.
+*/
+void camera_set_shader_matrices(Camera *camera, Shader *shader,
+                                const char* view_mat_name, const char* proj_mat_name);
 
 #endif // !CAMERA_H

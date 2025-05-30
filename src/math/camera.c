@@ -4,6 +4,7 @@
 #include "math/transform.h"
 #include "math/vectors.h"
 #include "math/projection.h"
+#include "render/shader.h"
 #include <stdlib.h>
 
 void camera_calculate_matrices(Camera *camera) {
@@ -21,8 +22,9 @@ void camera_calculate_matrices(Camera *camera) {
 
   const float aspect_ratio = (float)camera->width / camera->height;
 
+  // TODO: Finish orthographic projection
   if (camera->projection_type == PROJECTION_TYPE_PERSPECTIVE) {
-    float tangent, top, right, left, bottom;
+    float tangent, top, right;
 
     tangent = tan(degrees_to_radians(camera->field_of_view) / 2);
 
@@ -34,10 +36,12 @@ void camera_calculate_matrices(Camera *camera) {
       top = right / aspect_ratio;
     }
 
-    left = -right;
-    bottom = -top;
+    projection_perspective_symmetrical(&camera->projection_matrix, right * 2, top * 2, front, back);
+  } else {
+    float rprism_w = aspect_ratio / camera->zoom;
+    float rprism_h = 1.f / camera->zoom;
 
-    projection_perspective(&camera->projection_matrix, left, right, bottom, top, front, back);
+    projection_orthographic_symmetrical(&camera->projection_matrix, rprism_w, rprism_h, front, back);
   }
 }
 
@@ -50,5 +54,21 @@ Camera *camera_create(int width, int height) {
   camera->position = (Vec3f){0, 0, 0};
   camera->rotation = (Rotation3f){0, 0, 0};
 
+  camera->field_of_view = 60;
+  camera->zoom = 1.f / 2.f;
+  camera->projection_type = PROJECTION_TYPE_PERSPECTIVE;
+  camera->clip_near = 0.1;
+  camera->clip_far = 100.f;
+
   return camera;
+}
+
+inline void camera_free(Camera *camera) {
+  free(camera);
+}
+
+inline void camera_set_shader_matrices(Camera *camera, Shader *shader,
+                                const char* view_mat_name, const char* proj_mat_name) {
+  shader_uniform_mat4x4f(shader, view_mat_name, &camera->view_matrix);
+  shader_uniform_mat4x4f(shader, proj_mat_name, &camera->projection_matrix);
 }
