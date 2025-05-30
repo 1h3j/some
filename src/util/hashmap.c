@@ -89,8 +89,6 @@ void *map_at(map_t *map, void *key, unsigned int key_len) {
       break;
     }
 
-    // unsigned int keylen_from_map = *(unsigned int *)(*key_ptr_ptr);
-
     // For optimization, because memcmp is slow.
     if (*(char *)key == *(char *) (*key_ptr_ptr + sizeof(unsigned int))) {
       if (memcmp(key, *key_ptr_ptr + sizeof(unsigned int), key_len) == 0) {
@@ -134,8 +132,6 @@ void* map_get(map_t *map, void *key, unsigned int key_len) {
     if (*key_ptr_ptr == NULL) {
       return NULL;
     }
-
-    // unsigned int keylen_from_map = *(unsigned int *)(*key_ptr_ptr);
 
     // For optimization, because memcmp is slow.
     if (*(char *)key == *(char *) (*key_ptr_ptr + sizeof(unsigned int))) {
