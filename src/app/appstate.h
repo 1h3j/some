@@ -1,7 +1,7 @@
 #ifndef APPSTATE_H
 #define APPSTATE_H
 
-#include "resources.h"
+// #include "resources.h"
 #include "render/renderer.h"
 
 #include <SDL3/SDL_video.h>
@@ -9,7 +9,7 @@
 typedef struct {
   SDL_Window* window;
   Renderer *renderer;
-  resource_stack_t *resources;
+  // resource_stack_t *resources;
 
   unsigned int width, height;
 

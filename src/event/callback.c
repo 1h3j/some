@@ -66,7 +66,6 @@ int main(int argc, char** argv) {
   state.width = WINDOW_WIDTH;
   state.height = WINDOW_HEIGHT;
 
-
   create_event(EVENT_TYPE_INIT_EVENT, &info);
 
   while (state.appstatus_e == APPSTATUS_CONTINUE) {
