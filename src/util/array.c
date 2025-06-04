@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-array_t *array_create_r(unsigned int initial_length, unsigned int element_size) {
-  array_t *array = (array_t *) malloc(sizeof(array_t));
+Array *array_create_r(unsigned int initial_length, unsigned int element_size) {
+  Array *array = (Array *) malloc(sizeof(Array));
   
   array->array = malloc(initial_length * element_size);
   array->element_size = element_size;
@@ -14,12 +14,12 @@ array_t *array_create_r(unsigned int initial_length, unsigned int element_size) 
   return array;
 }
 
-void array_free(array_t *array) {
+void array_free(Array *array) {
   free(array->array);
   free(array);
 }
 
-void array_append_back(array_t *array, void* ptr) {
+void array_append_back(Array *array, void* ptr) {
   if (array->allocated_length == array->content_length++) {
     array->array = reallocarray(array->array, ++array->allocated_length, array->element_size);
   }

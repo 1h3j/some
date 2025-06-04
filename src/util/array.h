@@ -4,7 +4,7 @@
 typedef struct {
   void *array;
   unsigned int allocated_length, content_length, element_size;
-} array_t;
+} Array;
 
 /**
  * Allocate an array object
@@ -13,14 +13,14 @@ typedef struct {
  * @param element_size   Size of an element in bytes.
  * @return A pointer to an array object
 */
-array_t *array_create_r(unsigned int initial_length, unsigned int element_size);
+Array *array_create_r(unsigned int initial_length, unsigned int element_size);
 
 /**
  * Free the resources used by the array.
  *
  * @param array Pointer to an array object
 */
-void array_free(array_t *array);
+void array_free(Array *array);
 
 /**
  * Append an object to the array.
@@ -28,7 +28,7 @@ void array_free(array_t *array);
  * @param array Pointer to array object.
  * @param ptr   Pointer to data/object.
 */
-void array_append_back(array_t *array, void* ptr);
+void array_append_back(Array *array, void* ptr);
 
 /**
  * Macro version of array_create_r

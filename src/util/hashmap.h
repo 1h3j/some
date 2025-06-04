@@ -73,16 +73,16 @@
 typedef struct {
   void* buckets;
   unsigned long entries;
-} layer_t;
+} HashMapLayer;
 
 typedef struct {
-  layer_t *layers;
+  HashMapLayer *layers;
   unsigned int layers_size;
 
   unsigned int element_bytes;
 
   uint64_t (*hash_function)(uint64_t, void *, int);
-} map_t;
+} HashMap;
 
 /**
  * Implementation of FNV-1a hashing function
@@ -101,14 +101,14 @@ uint64_t hash_fnv1a(uint64_t base, void* input, int len);
  * @param layers       Number of layers. Recommended amount is 2
  * @param element_size Size of an element in bytes
 */
-map_t *map_create(unsigned long size, int layers, unsigned long element_size);
+HashMap *map_create(unsigned long size, int layers, unsigned long element_size);
 
 /**
  * Frees a map object.
  *
  * @param map Pointer to a hash map
 */
-void map_free(map_t *map);
+void map_free(HashMap *map);
 
 /**
  * Gives you a pointer to the location of what the key represents.
@@ -119,7 +119,7 @@ void map_free(map_t *map);
  *
  * @return Pointer assigned to the key in the map.
 */
-void *map_at(map_t *map, void* key, unsigned int key_len);
+void *map_at(HashMap *map, void* key, unsigned int key_len);
 
 /**
  * Sets the value at a given key.
@@ -129,7 +129,7 @@ void *map_at(map_t *map, void* key, unsigned int key_len);
  * @param key_len Size of the key data in bytes.
  * @param data    Pointer containing the actual data.
 */
-void map_set(map_t *map, void* key, unsigned int key_len, void* data);
+void map_set(HashMap *map, void* key, unsigned int key_len, void* data);
 
 /**
  * Get the pointer of value without creating an entry like `map_at`
@@ -138,7 +138,7 @@ void map_set(map_t *map, void* key, unsigned int key_len, void* data);
  * @param key     Pointer to the key data.
  * @param key_len Size of the key data in bytes.
 */
-void* map_get(map_t *map, void *key, unsigned int key_len);
+void* map_get(HashMap *map, void *key, unsigned int key_len);
 
 #define d_map_at(map, key) map_at(map, &key, sizeof(key))
 #define d_map_set(map, key, data) map_set(map, &key, sizeof(key), data)

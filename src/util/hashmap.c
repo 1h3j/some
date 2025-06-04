@@ -18,9 +18,9 @@ uint64_t hash_fnv1a(uint64_t base, void* input, int len) {
   return h;
 }
 
-map_t *map_create(unsigned long size, int layers, unsigned long element_size) {
-  map_t *map = (map_t *)malloc(sizeof(map_t));
-  map->layers = (layer_t *)malloc(sizeof(layer_t) * layers);
+HashMap *map_create(unsigned long size, int layers, unsigned long element_size) {
+  HashMap *map = (HashMap *)malloc(sizeof(HashMap));
+  map->layers = (HashMapLayer *)malloc(sizeof(HashMapLayer) * layers);
 
   map->hash_function = &hash_fnv1a;
 
@@ -31,7 +31,7 @@ map_t *map_create(unsigned long size, int layers, unsigned long element_size) {
   map->layers_size = layers;
 
   for (int l=0; l<layers; l++) {
-    layer_t *layer = map->layers + l;
+    HashMapLayer *layer = map->layers + l;
     layer->buckets = malloc(element_size * size);
 
     layer->entries = size;
@@ -42,9 +42,9 @@ map_t *map_create(unsigned long size, int layers, unsigned long element_size) {
   return map;
 }
 
-void map_free(map_t *map) {
+void map_free(HashMap *map) {
   for (int l=0; l < map->layers_size; l++) {
-    layer_t *layer = map->layers + l;
+    HashMapLayer *layer = map->layers + l;
 
     for (int e=0; e < layer->entries; e++) {
       // [ (void *)0x123... | value ]
@@ -64,13 +64,13 @@ void map_free(map_t *map) {
   free(map);
 }
 
-void *map_at(map_t *map, void *key, unsigned int key_len) {
+void *map_at(HashMap *map, void *key, unsigned int key_len) {
   uint64_t seed = HASHMAP_FNV_BASE;
 
   void* ptr = NULL;
 
   for (unsigned int l=0; l < map->layers_size; l++) {
-    layer_t *layer = &(map->layers[l]);
+    HashMapLayer *layer = &(map->layers[l]);
 
     uint64_t hash = map->hash_function(seed, key, key_len);
     unsigned int index = (unsigned int)(hash % layer->entries);
@@ -110,18 +110,18 @@ void *map_at(map_t *map, void *key, unsigned int key_len) {
   return ptr + sizeof(void *);
 }
 
-void map_set(map_t *map, void *key, unsigned int key_len, void *data) {
+void map_set(HashMap *map, void *key, unsigned int key_len, void *data) {
   void *ptr = map_at(map, key, key_len);
   memcpy(ptr, data, map->element_bytes - sizeof(void *));
 }
 
-void* map_get(map_t *map, void *key, unsigned int key_len) {
+void* map_get(HashMap *map, void *key, unsigned int key_len) {
   uint64_t seed = HASHMAP_FNV_BASE;
 
   void* ptr = NULL;
 
   for (unsigned int l=0; l < map->layers_size; l++) {
-    layer_t *layer = &(map->layers[l]);
+    HashMapLayer *layer = &(map->layers[l]);
 
     uint64_t hash = map->hash_function(seed, key, key_len);
     unsigned int index = (unsigned int)(hash % layer->entries);
