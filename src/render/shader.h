@@ -1,8 +1,10 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "math/matrix.h"
 #include "math/vectors.h"
+#include "math/matrix.h"
+#include "texture.h"
+
 #include <glad/glad.h>
 
 typedef struct {
@@ -42,27 +44,27 @@ void free_shader(Shader *shader);
 void shader_use(Shader *shader);
 
 /**
- * Set the uniform value of a shader
+ * Set the uniform value on a shader
  *
  * @param shader Shader object
  * @param name   Name of the uniform
  * @param value  Value of the uniform
 */
-void shader_uniform_Vec3f(Shader *shader, const char *name,
+void shader_uniform_vec3f(Shader *shader, const char *name,
                           Vec3f value);
 
 /**
- * Set the uniform value of a shader
+ * Set the uniform value on a shader
  *
  * @param shader Shader object
  * @param name   Name of the uniform
  * @param value  Value of the uniform
 */
-void shader_uniform_Vec4f(Shader *shader, const char *name,
+void shader_uniform_vec4f(Shader *shader, const char *name,
                           Vec4f value);
 
 /**
- * Set the uniform value of a shader
+ * Set the uniform value on a shader
  *
  * @param shader Shader object
  * @param name   Name of the uniform
@@ -70,5 +72,16 @@ void shader_uniform_Vec4f(Shader *shader, const char *name,
 */
 void shader_uniform_mat4x4f(Shader *shader, const char *name,
                             Matrix_4x4f *value);
+
+/**
+ * Set the uniform texture on a shader
+ *
+ * @param shader           Shader object
+ * @param name             Name of the uniform
+ * @param texture          Texture object
+ * @param texture_location Location of a texture object (0 - 16)
+*/
+void shader_uniform_texture2d(Shader *shader, const char *name,
+                            Texture2D *texture, int texture_location);
 
 #endif // !SHADER_H

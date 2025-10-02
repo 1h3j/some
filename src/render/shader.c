@@ -66,6 +66,7 @@ Shader *load_shader(const char *vsh_fpath, const char *fsh_fpath) {
   fread(vsh_source, fsize, 1, file_vsh);
   vsh_source[fsize] = '\0';
 
+
   FILE *file_fsh = fopen(fsh_fpath, "r");
   if (file_fsh == NULL) {
     log_error("Can't open file for reading: %s", fsh_fpath);
@@ -107,14 +108,14 @@ void free_shader(Shader *shader) {
 
 void shader_use(Shader *shader) { glUseProgram(shader->program); }
 
-void shader_uniform_Vec3f(Shader *shader, const char *name,
+void shader_uniform_vec3f(Shader *shader, const char *name,
                           Vec3f value) {
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
   glUniform3f(location, value.x, value.y, value.z);
 }
 
-void shader_uniform_Vec4f(Shader *shader, const char *name,
+void shader_uniform_vec4f(Shader *shader, const char *name,
                           Vec4f value) {
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
@@ -126,4 +127,16 @@ void shader_uniform_mat4x4f(Shader *shader, const char *name,
   shader_use(shader);
   int location = glGetUniformLocation(shader->program, name);
   glUniformMatrix4fv(location, 1, GL_TRUE, &value->m[0][0]); // lmao
+}
+
+void shader_uniform_texture2d(Shader *shader, const char *name,
+                            Texture2D *texture, int texture_location)
+{
+  shader_use(shader);
+  int location = glGetUniformLocation(shader->program, name);
+
+  glActiveTexture(GL_TEXTURE0 + texture_location);
+  glBindTexture(GL_TEXTURE_2D, texture->tex);
+
+  glUniform1i(location, texture_location);
 }

@@ -98,7 +98,7 @@ void transform_f_Vec3(TransformF *transform, Vec3f *v);
  * @param transform Pointer to a transformation matrix
  * @param offset    The offset to the transformation
  */
-void transform_dranslate(TransformD *transform, Vec3d offset);
+void transform_d_translate(TransformD *transform, Vec3d offset);
 
 /**
  * Scales the transformation matrix uniformly by a scalar.
