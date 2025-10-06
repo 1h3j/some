@@ -1,3 +1,0 @@
-CompileFlags:
-  Add: [-I/home/anon/Projects/SomeEngine/src, -I/home/anon/Projects/SomeEngine/glad/include, -xc, -Wall -DLOGGING_SHOW_FILE -DLOGGING_COLOR]
-  Compiler: gcc
