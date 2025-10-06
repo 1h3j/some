@@ -21,7 +21,10 @@ void array_free(Array *array) {
 
 void array_append_back(Array *array, void* ptr) {
   if (array->allocated_length == array->content_length++) {
-    array->array = reallocarray(array->array, ++array->allocated_length, array->element_size);
+    // Man
+    // array->array = reallocarray(array->array, ++array->allocated_length, array->element_size);
+
+    array->array = realloc(array->array, (++array->allocated_length) * array->element_size);
   }
   
   memcpy(array->array + array->content_length, ptr, array->element_size);
